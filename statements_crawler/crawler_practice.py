@@ -1,6 +1,6 @@
 # Refers to https://engkimbs.tistory.com/613?category=762758
-import requests
 
+import requests
 from bs4 import BeautifulSoup as Bs
 
 URL = "http://dataquestio.github.io/web-scraping-pages/ids_and_classes.html"

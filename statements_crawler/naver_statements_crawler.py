@@ -1,3 +1,5 @@
+# Refers to https://engkimbs.tistory.com/624?category=762758
+
 import requests
 from bs4 import BeautifulSoup as Bs
 
