@@ -14,10 +14,9 @@ def download_stock_codes():
     return df.종목코드.map('{:06d}'.format)
 
 
-def crawl_statement(code):
-    base_url = 'https://finance.naver.com/item/main.nhn?code='
-
-    html = requests.get(base_url + code).text
+def crawl_statement_summary(code):
+    url = 'https://finance.naver.com/item/main.nhn?code=%s' % code
+    html = requests.get(url).text
     soup = Bs(html, 'html.parser')
 
     finance_html = soup.select("div.section.cop_analysis div.sub_section")[0]
@@ -47,4 +46,4 @@ def crawl_statement(code):
 
 if __name__ == "__main__":
     stock_codes = list(download_stock_codes().values)
-    crawl_statement(stock_codes[0])
+    crawl_statement_summary(stock_codes[0])
