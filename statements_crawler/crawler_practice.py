@@ -1,18 +1,38 @@
-# Refers to https://engkimbs.tistory.com/613?category=762758
+# Refers to https://engkimbs.tistory.com/624?category=762758
 
 import requests
+import numpy as np
+import pandas as pd
+
 from bs4 import BeautifulSoup as Bs
 
-URL = "http://dataquestio.github.io/web-scraping-pages/ids_and_classes.html"
-page = requests.get(URL)
-soup = Bs(page.content, 'html.parser')
-# print(soup.prettify())
+URL = "https://finance.naver.com/item/main.nhn?code=005930"
 
-p_tags = soup.find_all('p', class_='outer-text')
-# print(p_tags)
+samsung_electronic = requests.get(URL)
+html = samsung_electronic.text
 
-first_id_tag = soup.find_all(id="first")
-# print(first_id_tag)
+soup = Bs(html, 'html.parser')
 
-div_p_tag = soup.select("div p")
-print(div_p_tag)
+finance_html = soup.select("div.section.cop_analysis div.sub_section")[0]
+# print(finance_html)
+
+th_data = [item.get_text().strip() for item in finance_html.select("thead th")]
+annual_date = th_data[3:7]
+quarter_date = th_data[7:13]
+
+finance_index = [item.get_text().strip() for item in
+                 finance_html.select("th.h_th2")][3:]
+
+finance_data = [item.get_text().strip() for item in finance_html.select("td")]
+finance_data = np.array(finance_data)
+finance_data.resize(len(finance_index), 10)
+
+finance_date = annual_date + quarter_date
+
+finance = pd.DataFrame(data=finance_data[0:, 0:], index=finance_index,
+                       columns=finance_date)
+
+annual_finance = finance.iloc[:, :4]
+quarter_finance = finance.iloc[:, 4:]
+print(annual_finance)
+print(quarter_finance)

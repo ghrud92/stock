@@ -7,9 +7,7 @@ import stock_util
 
 from bs4 import BeautifulSoup as Bs
 
-
-SAVE_PATH = "data/crawled_short_statements.json"
-
+SAVE_PATH = "data/crawled_statements_.json"
 
 def crawl_short_statement(code):
     url = 'https://finance.naver.com/item/main.nhn?code=%s' % code
