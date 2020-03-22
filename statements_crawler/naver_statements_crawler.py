@@ -7,11 +7,11 @@ import stock_util
 
 from bs4 import BeautifulSoup as Bs
 
-SAVE_PATH = "data/crawled_statements_.json"
+SAVE_PATH = "data/naver_statements.json"
 
-def crawl_short_statement(code):
+def crawl_short_statement(i, code):
     url = 'https://finance.naver.com/item/main.nhn?code=%s' % code
-    print("crawl from %s" % url)
+    print(f"crawl {i} from {url}")
     html = requests.get(url).text
     soup = Bs(html, 'html.parser')
     result = {'code': code}
@@ -65,5 +65,5 @@ def crawl_short_statement(code):
 
 if __name__ == "__main__":
     stock_codes = stock_util.download_stock_codes()
-    statements = [crawl_short_statement(code) for code in stock_codes]
+    statements = [crawl_short_statement(i, code) for i, code in enumerate(stock_codes)]
     stock_util.save_json(SAVE_PATH, statements)
