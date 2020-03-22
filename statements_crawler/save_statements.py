@@ -1,8 +1,10 @@
-import pymongo
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-import mongo_util
-from mongo_util import MongoIndex, ascending, descending
-import stock_util
+from common import mongo_util
+from common.mongo_util import MongoIndex, ascending, descending
+from common import stock_util
 
 DATA_PATH = "data/naver_statements.json"
 

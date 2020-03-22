@@ -1,11 +1,15 @@
 # Refers to https://engkimbs.tistory.com/624?category=762758
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
 import numpy as np
 import pandas as pd
 import requests
-import stock_util
-
 from bs4 import BeautifulSoup as Bs
+
+from common import stock_util
 
 SAVE_PATH = "data/naver_statements.json"
 
