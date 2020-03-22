@@ -1,16 +1,16 @@
 import pymongo
 
+import mongo_util
+from mongo_util import MongoIndex, ascending, descending
 import stock_util
 
 DATA_PATH = "data/naver_statements.json"
 
 STATEMENT_COLLECTION_INDEX = [
-    {'key': [('sid', pymongo.ASCENDING)], 'unique': True},
-    {'key': [('company', pymongo.ASCENDING)], 'unique': False},
-    {'key': [('term', pymongo.DESCENDING), ('year', pymongo.DESCENDING)], 
-    'unique': False},
-    {'key': [('term', pymongo.DESCENDING), ('year', pymongo.DESCENDING), 
-    ('month', pymongo.DESCENDING)], 'unique': False}
+    MongoIndex([ascending('sid')], True),
+    MongoIndex([ascending('company')]),
+    MongoIndex([descending('term'), descending('year')]),
+    MongoIndex([descending('term'), descending('year'), descending('month')])
 ]
 
 
@@ -43,36 +43,11 @@ def distribute_finance(data):
     return result
 
 
-def insert_documents(statements):
-    collection = connect_collection(db='stock', collection='statement', drop=True)
-    create_index(collection, STATEMENT_COLLECTION_INDEX)
-    result = collection.insert_many(statements)
-    print(f"Insert {len(result.inserted_ids)} documents")
-
-
-def insert_document(statement):
-    collection = connect_collection(db='stock', collection='statement', drop=True)
-    create_index(collection, STATEMENT_COLLECTION_INDEX)
-    print(f"insert {statement['sid']} document.")
-    result = collection.insert_one(statement)
-    print(result.acknowledged)
-
-
-def connect_collection(db, collection, drop=False):
-    client = pymongo.MongoClient()
-    db = client.get_database(db)
-    if drop:
-        db.drop_collection(collection)
-    return db.get_collection(collection)
-
-
-def create_index(collection, indexes):
-    for index in indexes:
-        collection.create_index(index['key'], unique=index['unique'])
-
-
 if __name__ == "__main__":
     data = stock_util.load_json(DATA_PATH)
     statements = [distribute_finance(statement) for statement in data]
     statements = [item for sublist in statements for item in sublist]
-    insert_documents(statements)
+
+    collection = mongo_util.connect_collection('stock', 'statement', True)
+    mongo_util.create_index(collection, STATEMENT_COLLECTION_INDEX)
+    mongo_util.insert_documents(collection, statements)
